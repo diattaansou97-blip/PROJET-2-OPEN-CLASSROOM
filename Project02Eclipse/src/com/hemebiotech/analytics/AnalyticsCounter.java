@@ -1,43 +1,31 @@
 package com.hemebiotech.analytics;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class AnalyticsCounter {
 
     public static void main(String[] args) {
-        String inputFile = "C:\\Users\\diatt\\eclipse-workspace\\Project_DA_Java_EN_Come_to_the_Rescue_of_a_Java_Application\\Project02Eclipse\\src\\com\\hemebiotech\\analytics\\symptoms.txt";
-        String outputFile = "result.out";
 
-        Map<String, Integer> symptomCount = new TreeMap<>(); // TreeMap trie automatiquement par clé
+        // 1. Lire les symptômes depuis le fichier
+        ISymptomReader reader = new ReadSymptomDataFromFile("C:\\\\Users\\\\diatt\\\\eclipse-workspace\\\\Project_DA_Java_EN_Come_to_the_Rescue_of_a_Java_Application\\\\Project02Eclipse\\\\src\\\\com\\\\hemebiotech\\\\analytics\\\\symptoms.txt");
+        List<String> symptoms = reader.GetSymptoms();
 
-        // Lecture du fichier et comptage des symptômes
-        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                line = line.trim(); // enlever les espaces inutiles
-                if (!line.isEmpty()) {
-                    symptomCount.put(line, symptomCount.getOrDefault(line, 0) + 1);
-                    System.out.println(line + ": " + symptomCount.get(line));
-                }
+        // 2. Compter les occurrences
+        Map<String, Integer> symptomCount = new TreeMap<>(); // trie alphabétique
+        for (String s : symptoms) {
+            s = s.trim();
+            if (!s.isEmpty()) {
+                symptomCount.put(s, symptomCount.getOrDefault(s, 0) + 1);
             }
-        } catch (IOException e) {
-            System.err.println("Erreur lecture fichier : " + e.getMessage());
-            return;
         }
 
-        // Écriture des résultats triés
-        try (FileWriter writer = new FileWriter(outputFile)) {
-            for (Map.Entry<String, Integer> entry : symptomCount.entrySet()) {
-                writer.write(entry.getKey() + ": " + entry.getValue() + "\n");
-            }
-            System.out.println("Résultats écrits dans " + outputFile + " ✅");
-        } catch (IOException e) {
-            System.err.println("Erreur écriture fichier : " + e.getMessage());
-        }
+        // 3. Écrire les résultats dans result.out
+        ISymptomWriter writer = new WriteSymptomDataToFile("result.out");
+        writer.writeSymptoms(symptomCount);
+
+        // 4. Affichage console (optionnel)
+        symptomCount.forEach((symptom, count) -> System.out.println(symptom + ": " + count));
     }
 }
