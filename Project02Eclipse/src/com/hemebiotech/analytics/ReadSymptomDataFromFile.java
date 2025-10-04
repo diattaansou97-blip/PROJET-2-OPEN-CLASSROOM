@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Reads symptom data from a text file.
- * Each line in the file represents one symptom.
+ * Lit les données des symptômes à partir d'un fichier texte.
+ * Chaque ligne du fichier correspond à un symptôme.
  * <p>
- * Example of file format:
+ * Exemple de format de fichier :
  * <pre>
  * headache
  * rash
@@ -20,38 +20,39 @@ import java.util.List;
  */
 public class ReadSymptomDataFromFile implements ISymptomReader {
 
+    /** Chemin vers le fichier contenant les symptômes. */
     private final String filePath;
 
     /**
-     * Creates a new reader to extract symptoms from a file.
+     * Crée un lecteur capable d'extraire les symptômes depuis un fichier.
      *
-     * @param filePath relative or absolute path to the text file containing symptom names, one per line.
+     * @param filePath chemin relatif ou absolu vers le fichier texte contenant les noms de symptômes, un par ligne.
      */
     public ReadSymptomDataFromFile(String filePath) {
         this.filePath = filePath;
     }
 
     /**
-     * Reads all symptoms from the given file.
+     * Lit tous les symptômes dans le fichier donné.
      *
-     * @return a list of all symptoms found; if no file or empty, returns an empty list.
+     * @return une liste de tous les symptômes trouvés ; si le fichier est inexistant ou vide, retourne une liste vide.
      */
     @Override
     public List<String> GetSymptoms() {
         List<String> symptoms = new ArrayList<>();
 
         if (filePath == null || filePath.isEmpty()) {
-            System.err.println("Error: File path is null or empty.");
+            System.err.println("Erreur : le chemin du fichier est vide ou null.");
             return symptoms;
         }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                symptoms.add(line.trim()); // trim() pour enlever les espaces inutiles
+                symptoms.add(line.trim()); // supprime les espaces inutiles
             }
         } catch (IOException e) {
-            System.err.println("Error reading symptoms from file: " + e.getMessage());
+            System.err.println("Erreur lecture fichier de symptômes : " + e.getMessage());
         }
 
         return symptoms;
