@@ -6,26 +6,35 @@ import java.util.TreeMap;
 
 public class AnalyticsCounter {
 
-    public static void main(String[] args) {
+    private ISymptomReader reader;
+    private ISymptomWriter writer;
 
-        // 1. Lire les symptômes depuis le fichier
-        ISymptomReader reader = new ReadSymptomDataFromFile("C:\\\\Users\\\\diatt\\\\eclipse-workspace\\\\Project_DA_Java_EN_Come_to_the_Rescue_of_a_Java_Application\\\\Project02Eclipse\\\\src\\\\com\\\\hemebiotech\\\\analytics\\\\symptoms.txt");
-        List<String> symptoms = reader.GetSymptoms();
+    public AnalyticsCounter(ISymptomReader reader, ISymptomWriter writer) {
+        this.reader = reader;
+        this.writer = writer;
+    }
 
-        // 2. Compter les occurrences
-        Map<String, Integer> symptomCount = new TreeMap<>(); // trie alphabétique
+    // Lire les symptômes
+    public List<String> getSymptoms() {
+        return reader.GetSymptoms();
+    }
+
+    // Compter les occurrences
+    public Map<String, Integer> countSymptoms(List<String> symptoms) {
+        Map<String, Integer> counts = new TreeMap<>();
         for (String s : symptoms) {
-            s = s.trim();
-            if (!s.isEmpty()) {
-                symptomCount.put(s, symptomCount.getOrDefault(s, 0) + 1);
-            }
+            counts.put(s, counts.getOrDefault(s, 0) + 1);
         }
+        return counts;
+    }
 
-        // 3. Écrire les résultats dans result.out
-        ISymptomWriter writer = new WriteSymptomDataToFile("result.out");
-        writer.writeSymptoms(symptomCount);
+    // Trier les symptômes (TreeMap trie déjà par clé)
+    public Map<String, Integer> sortSymptoms(Map<String, Integer> counts) {
+        return new TreeMap<>(counts);
+    }
 
-        // 4. Affichage console (optionnel)
-        symptomCount.forEach((symptom, count) -> System.out.println(symptom + ": " + count));
+    // Écrire dans le fichier
+    public void writeSymptoms(Map<String, Integer> counts) {
+        writer.writeSymptoms(counts);
     }
 }
